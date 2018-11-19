@@ -18,3 +18,7 @@ SOURCES += main.cpp\
 HEADERS  += YOLOTestUI.h
 
 FORMS    += YOLOTestUI.ui
+
+
+LIBS += -ldarknet
+INCLUDEPATH += -I/usr/local/include

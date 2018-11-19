@@ -2,7 +2,10 @@
 #define YOLOTESTUI_H
 
 #include <QMainWindow>
+#include <QDebug>
+#include <QTextCodec>
 #include <darknet/darknet_yolo.h>
+
 namespace Ui {
 class YOLOTestUI;
 }
@@ -25,6 +28,7 @@ private:
     Ui::YOLOTestUI *ui;
     YOLO_Darknet *yolo;
     void connectSignals();
+
 };
 
 #endif // YOLOTESTUI_H
