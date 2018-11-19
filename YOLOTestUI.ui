@@ -136,7 +136,7 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QPushButton" name="pushSelectConfig_2">
+         <widget class="QPushButton" name="pushSelectTestData">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -345,7 +345,7 @@
      </widget>
     </item>
     <item row="3" column="1">
-     <widget class="QCheckBox" name="checkBox">
+     <widget class="QCheckBox" name="checkOpenImage">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
         <horstretch>0</horstretch>
