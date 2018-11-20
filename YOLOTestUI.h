@@ -4,7 +4,15 @@
 #include <QMainWindow>
 #include <QDebug>
 #include <QTextCodec>
-#include <darknet/darknet_yolo.h>
+#include "./detect.h"
+#include "./MyQclass.h"
+#include "./readtxt.h"
+
+#define LABELNUM 2
+enum LABELS{
+    LABEL_BALL = 0,
+    LABEL_GOALPOST
+};
 
 namespace Ui {
 class YOLOTestUI;
@@ -23,12 +31,15 @@ private slots:
     void onPushSelectConfig();
     void onPushSelectTestData();
     void stateChangedCheckOpenImage();
-    
+    bool enableRun();
+
 private:
     Ui::YOLOTestUI *ui;
-    YOLO_Darknet *yolo;
     void connectSignals();
-
+    DetectYOLOv1 *yolov1;
+    MyQclass myq;
+    QDir currentdir;
+    MyQReadData *data;
 };
 
 #endif // YOLOTESTUI_H

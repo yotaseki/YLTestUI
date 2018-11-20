@@ -9,6 +9,12 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(YOLOTestUI_SRCS
     ./main.cpp
     ./YOLOTestUI.cpp
+    ./detect.cpp
+    ./detect.h
+    ./MyQclass.cpp
+    ./MyQclass.h
+    ./readtxt.cpp
+    ./readtxt.h
 	)
 set(YOLOTestUI_MOC_HDRS
     ./YOLOTestUI.h

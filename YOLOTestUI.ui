@@ -147,6 +147,9 @@
     </item>
     <item row="3" column="1">
      <widget class="QCheckBox" name="checkOpenImage">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
         <horstretch>0</horstretch>
@@ -190,7 +193,7 @@
            </size>
           </property>
           <property name="text">
-           <string>/home/yota/YOLO/models/RoboCup20181106All.weights</string>
+           <string>/home/yota/models/tiny-yolo_2class_final.weights</string>
           </property>
          </widget>
         </item>
@@ -207,6 +210,9 @@
             <width>100</width>
             <height>0</height>
            </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: rgb(255, 255, 255);</string>
           </property>
           <property name="text">
            <string>(.weights)</string>
@@ -245,7 +251,7 @@
            </size>
           </property>
           <property name="text">
-           <string>/home/yota/YOLO/models/tiny-yolo_2class.cfg</string>
+           <string>/home/yota/models/tiny-yolo_2class.cfg</string>
           </property>
          </widget>
         </item>
@@ -262,6 +268,9 @@
             <width>100</width>
             <height>0</height>
            </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: rgb(255, 255, 255);</string>
           </property>
           <property name="text">
            <string>(.cfg)</string>
@@ -315,6 +324,9 @@
             <height>0</height>
            </size>
           </property>
+          <property name="styleSheet">
+           <string notr="true">color: rgb(255, 255, 255);</string>
+          </property>
           <property name="text">
            <string>(.txt)</string>
           </property>
@@ -326,6 +338,9 @@
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
          <widget class="QPushButton" name="pushRunTest">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -334,8 +349,8 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>100</width>
-            <height>0</height>
+            <width>50</width>
+            <height>45</height>
            </size>
           </property>
           <property name="text">

@@ -13,12 +13,18 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        YOLOTestUI.cpp
+        YOLOTestUI.cpp \
+    detect.cpp \
+    MyQclass.cpp \
+    readtxt.cpp
 
-HEADERS  += YOLOTestUI.h
+HEADERS  += YOLOTestUI.h \
+    detect.h \
+    MyQclass.h \
+    readtxt.h
 
 FORMS    += YOLOTestUI.ui
 
 
-LIBS += -ldarknet
-INCLUDEPATH += -I/usr/local/include
+LIBS += -ldarknet -lopencv_core -lopencv_highgui -lopencv_imgproc
+INCLUDEPATH += -I/usr/include/opencv
