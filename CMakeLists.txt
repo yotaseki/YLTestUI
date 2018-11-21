@@ -15,6 +15,8 @@ set(YOLOTestUI_SRCS
     ./MyQclass.h
     ./readtxt.cpp
     ./readtxt.h
+    ./test.cpp
+    ./test.h
 	)
 set(YOLOTestUI_MOC_HDRS
     ./YOLOTestUI.h
