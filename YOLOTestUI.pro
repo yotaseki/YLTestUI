@@ -16,12 +16,14 @@ SOURCES += main.cpp\
         YOLOTestUI.cpp \
     detect.cpp \
     MyQclass.cpp \
-    readtxt.cpp
+    readtxt.cpp \
+    test.cpp
 
 HEADERS  += YOLOTestUI.h \
     detect.h \
     MyQclass.h \
-    readtxt.h
+    readtxt.h \
+    test.h
 
 FORMS    += YOLOTestUI.ui
 

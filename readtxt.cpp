@@ -17,10 +17,10 @@ void MyQReadData::readtxt(QString path){
     }
     QTextStream in(&file);
     QString inStr = in.readAll();
-    images = inStr.split("\n");
+    images = inStr.split('\n');
     inStr = inStr.replace("images","labels");
     inStr = inStr.replace(".jpg", ".txt");
     inStr = inStr.replace(".png", ".txt");
-    labels = inStr.split("\n");
+    labels = inStr.split('\n');
     file.close();
 }

@@ -29,23 +29,43 @@ void YOLOTestUI::onPushRunTest()
     std::string weight = ui->lineWeights->text().toStdString();
     yolov1 = new DetectYOLOv1(cfg, weight );
     data = new MyQReadData(ui->lineTestData->text());
-    for(int i=0; i<data->images.size(); i++)
-    {
-        cv::Mat m = cv::imread(data->images[i].toStdString());
-        IplImage ipl = m;
-        yolov1->detect(ipl);
+    ui->progressBar->setValue(0);
 
-        int label = LABEL_BALL;
-        int topN = 1;
-        std::vector<DetectYOLOv1::bbox_T> ball;
-        std::vector<DetectYOLOv1::bbox_T> goalpost;
-        for(int j=0; j<100;j++){
-            yolov1->getPredict(label,topN,threshold,ball);
+    std::vector<float> Precision[LABELNUM];
+    std::vector<float> Recall[LABELNUM];
+    for(int thre=0; thre<100;thre++)
+    {
+        YOLOTest *test[LABELNUM];
+        for(int cls=0; cls<LABELNUM; cls++){
+            test[cls] = new YOLOTest(640,480);
         }
-        yolov1->getPredict(label,topN,
+        float threshold =  (float)thre / 100.0;
+        for(int i=0; i < data->images.size(); i++){
+            // detect
+            cv::Mat m = cv::imread(data->images[i].toStdString());
+            IplImage ipl = m;
+            yolov1->detect(ipl);
+            // test
+
+            int labelnum[] = {LABEL_BALL, LABEL_GOALPOST};
+            int topN[] = {1, 2};
+            std::vector<DetectYOLOv1::bbox_T> predict[LABELNUM];
+            std::vector<DetectYOLOv1::bbox_T> g_truth[LABELNUM];
+            for(int cls=0; cls<LABELNUM; cls++)
+            {
+                yolov1->getPredict(labelnum[cls],topN[cls],threshold    ,predict[cls]);
+                yolov1->getGroundTruth(labelnum[cls], data->labels[i].toStdString()   ,g_truth[cls]);
+                test[cls]->run_test(predict[cls], g_truth[cls]);
+            }
+        }
+        for(int cls=0; cls<LABELNUM; cls++)
+        {
+            Precision[cls].push_back(test[cls]->precision());
+            Recall[cls].push_back(test[cls]->recall());
+            delete(test[cls]);
+        }
+        ui->progressBar->setValue(thre);
     }
-    std::vector<DetectYOLOv1::bbox_T> bboxes[LABELNUM];
-    yolov1->detect();
     delete(data);
     delete(yolov1);
     ui->checkOpenImage->setEnabled(true);

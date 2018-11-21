@@ -7,12 +7,7 @@
 #include "./detect.h"
 #include "./MyQclass.h"
 #include "./readtxt.h"
-
-#define LABELNUM 2
-enum LABELS{
-    LABEL_BALL = 0,
-    LABEL_GOALPOST
-};
+#include "./test.h"
 
 namespace Ui {
 class YOLOTestUI;

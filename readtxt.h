@@ -3,6 +3,7 @@
 #include <iostream>
 #include <QFile>
 #include <QTextStream>
+#include <QStringList>
 #include <QDebug>
 
 class MyQReadData{

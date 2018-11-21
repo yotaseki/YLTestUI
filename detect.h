@@ -17,7 +17,7 @@ public:
     ~DetectYOLOv1();
     void detect(IplImage &src);
     void getPredict(int labelnum, int topN, float threshold, std::vector<bbox_T> &bboxes);
-    void getGroundTruth(std::string labelpath, std::vector<bbox_T> &bboxes);
+    void getGroundTruth(int labelnum, std::string labelpath, std::vector<bbox_T> &bboxes);
 private:
     int wsize;
     int hsize;

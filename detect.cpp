@@ -39,7 +39,7 @@ void DetectYOLOv1::getPredict(int labelnum, int topN, float threshold, std::vect
     }
 }
 
-void DetectYOLOv1::getGroundTruth(std::string labelpath, std::vector<bbox_T> &bboxes)
+void DetectYOLOv1::getGroundTruth(int labelnum, std::string labelpath, std::vector<bbox_T> &bboxes)
 {
 
 }
