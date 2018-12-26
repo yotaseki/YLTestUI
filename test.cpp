@@ -1,17 +1,17 @@
 #include "test.h"
 using namespace std;
 
-YOLOTest::YOLOTest(int img_width, int img_height):
+YOLO_Test::YOLO_Test(int img_width, int img_height):
     TP(0),TN(0),FP(0),FN(0)
 {
     Width = img_width;
     Height= img_height;
 }
 
-YOLOTest::~YOLOTest(){
+YOLO_Test::~YOLO_Test(){
 }
 
-void YOLOTest::run_test(vector<DetectYOLOv1::bbox_T> &pr,vector<DetectYOLOv1::bbox_T> &gt){
+void YOLO_Test::run_test(vector<DetectYOLOv1::bbox_T> &pr,vector<DetectYOLOv1::bbox_T> &gt){
     // ground truthから最も近いBoxを評価(評価するBoxが被る可能性有)
     int index;
     if(gt.size() == 0){
@@ -58,17 +58,17 @@ void YOLOTest::run_test(vector<DetectYOLOv1::bbox_T> &pr,vector<DetectYOLOv1::bb
     }
 }
 
-float YOLOTest::calcDistance(float cx1, float cy1, float cx2, float cy2){
+float YOLO_Test::calcDistance(float cx1, float cy1, float cx2, float cy2){
     float d = sqrt( (cx2-cx1)*(cx2-cx1) + (cy2-cy1)*(cy2-cy1) );
     return d;
 }
 
-void YOLOTest::setImageSize(int w, int h){
+void YOLO_Test::setImageSize(int w, int h){
     Width = w;
     Height = h;
 }
 
-float YOLOTest::calcIoU(cv::Rect &p, cv::Rect &r){
+float YOLO_Test::calcIoU(cv::Rect &p, cv::Rect &r){
     float iou;
     cv::Rect over = p|r;
     int total_area = (p.width*p.height) + (r.width*r.height);
@@ -80,14 +80,14 @@ float YOLOTest::calcIoU(cv::Rect &p, cv::Rect &r){
     return iou;
 }
 
-float YOLOTest::precision(){
+float YOLO_Test::precision(){
     if( (TP+FP) == 0 ){
         return 0.0;
     }
     return (float)TP / (TP + FP);
 }
 
-float YOLOTest::recall(){
+float YOLO_Test::recall(){
     if( (TP+FN) == 0 ){
         return 0.0;
     }

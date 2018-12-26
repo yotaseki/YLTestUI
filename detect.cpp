@@ -1,6 +1,6 @@
 #include "detect.h"
 
-DetectYOLOv1::DetectYOLOv1(std::string &cfg, std::string &weight):
+YOLO_Detect::YOLO_Detect(std::string &cfg, std::string &weight):
     wsize(320),
     hsize(240)
 {
@@ -8,19 +8,19 @@ DetectYOLOv1::DetectYOLOv1(std::string &cfg, std::string &weight):
     yolo_init((char *)cfg.c_str(), (char *)weight.c_str(), threshold);
 }
 
-DetectYOLOv1::~DetectYOLOv1()
+YOLO_Detect::~YOLO_Detect()
 {
     yolo_fina();
 }
 
-void DetectYOLOv1::detect(IplImage &src)
+void YOLO_Detect::detect(IplImage &src)
 {
     yolo_predict(&src);
     wsize = src.width;
     hsize = src.height;
 }
 
-void DetectYOLOv1::getPredict(int labelnum, int topN, float threshold, std::vector<bbox_T> &bboxes)
+void YOLO_Detect::getPredict(int labelnum, int topN, float threshold, std::vector<bbox_T> &bboxes)
 {
     int x,y,w,h;
     float score = .0f;
@@ -39,7 +39,7 @@ void DetectYOLOv1::getPredict(int labelnum, int topN, float threshold, std::vect
     }
 }
 
-void DetectYOLOv1::getGroundTruth(int labelnum, std::string labelpath, std::vector<bbox_T> &bboxes)
+void YOLO_Detect::getGroundTruth(int labelnum, std::string labelpath, std::vector<bbox_T> &bboxes)
 {
 
 }

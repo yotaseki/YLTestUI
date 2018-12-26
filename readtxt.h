@@ -6,10 +6,10 @@
 #include <QStringList>
 #include <QDebug>
 
-class MyQReadData{
+class YOLO_ReadText{
 public:
-    MyQReadData(QString filePath);
-    ~MyQReadData();
+    YOLO_ReadText(QString filePath);
+    ~YOLO_ReadText();
     QList<QString> images;
     QList<QString> labels;
 private:

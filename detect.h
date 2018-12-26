@@ -2,7 +2,7 @@
 #include <darknet/cit_yolo.h>
 #include <opencv2/opencv.hpp>
 
-class DetectYOLOv1
+class YOLO_Detect
 {
 public:
      typedef struct bbox_T{
@@ -13,8 +13,8 @@ public:
         float score;
     }bbox;
 
-    DetectYOLOv1(std::string &weight, std::string &cfg);
-    ~DetectYOLOv1();
+    YOLO_Detect(std::string &weight, std::string &cfg);
+    ~YOLO_Detect();
     void detect(IplImage &src);
     void getPredict(int labelnum, int topN, float threshold, std::vector<bbox_T> &bboxes);
     void getGroundTruth(int labelnum, std::string labelpath, std::vector<bbox_T> &bboxes);

@@ -3,10 +3,10 @@
 #include <opencv2/opencv.hpp>
 #include "./detect.h"
 
-class YOLOTest{
+class YOLO_Test{
 public:
-    YOLOTest(int img_width, int img_height);
-    ~YOLOTest();
+    YOLO_Test(int img_width, int img_height);
+    ~YOLO_Test();
     void run_test(std::vector<DetectYOLOv1::bbox_T> &predict, std::vector<DetectYOLOv1::bbox_T> &truth);
     void setImageSize(int w,int h);
     float calcDistance(float cx1, float cy1, float cx2, float cy2);

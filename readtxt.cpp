@@ -1,17 +1,17 @@
 #include "./readtxt.h"
 
 
-MyQReadData::MyQReadData(QString path)
+YOLO_ReadText::YOLO_ReadText(QString path)
 {
-    readtxt(path);
+    YOLOReadtxt(path);
 }
 
-MyQReadData::~MyQReadData(){
+YOLO_ReadText::~YOLO_ReadText(){
 }
 
-void MyQReadData::readtxt(QString path){
+void YOLO_ReadText::readtxt(QString path){
     QFile file(path);
-    if(!file.open(QIODevice::ReadOnly)){
+    if(!file.open(QIODevice::YOLOReadOnly)){
         QString errStr = "Open failed. :" + path;
         qDebug() << errStr;
     }
