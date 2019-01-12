@@ -13,5 +13,5 @@ public:
     QList<QString> images;
     QList<QString> labels;
 private:
-    void readtxt(QString path);
+    void readTraintxt(QString path);
 };

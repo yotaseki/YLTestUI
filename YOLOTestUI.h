@@ -31,10 +31,10 @@ private slots:
 private:
     Ui::YOLOTestUI *ui;
     void connectSignals();
-    DetectYOLOv1 *yolov1;
     MyQclass myq;
     QDir currentdir;
-    MyQReadData *data;
+    YOLO_Detect *yolo;
+    YOLO_ReadText *data;
 };
 
 #endif // YOLOTESTUI_H

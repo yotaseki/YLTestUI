@@ -27,47 +27,40 @@ void YOLOTestUI::onPushRunTest()
 {
     std::string cfg = ui->lineConfig->text().toStdString();
     std::string weight = ui->lineWeights->text().toStdString();
-    yolov1 = new DetectYOLOv1(cfg, weight );
-    data = new MyQReadData(ui->lineTestData->text());
     ui->progressBar->setValue(0);
+    data = new YOLO_ReadText(ui->lineTestData->text());
+    yolo = new YOLO_Detect(cfg, weight );
+    YOLO_Test *test;
 
-    std::vector<float> Precision[LABELNUM];
-    std::vector<float> Recall[LABELNUM];
-    for(int thre=0; thre<100;thre++)
-    {
-        YOLOTest *test[LABELNUM];
-        for(int cls=0; cls<LABELNUM; cls++){
-            test[cls] = new YOLOTest(640,480);
-        }
-        float threshold =  (float)thre / 100.0;
-        for(int i=0; i < data->images.size(); i++){
-            // detect
-            cv::Mat m = cv::imread(data->images[i].toStdString());
-            IplImage ipl = m;
-            yolov1->detect(ipl);
-            // test
-
-            int labelnum[] = {LABEL_BALL, LABEL_GOALPOST};
-            int topN[] = {1, 2};
-            std::vector<DetectYOLOv1::bbox_T> predict[LABELNUM];
-            std::vector<DetectYOLOv1::bbox_T> g_truth[LABELNUM];
-            for(int cls=0; cls<LABELNUM; cls++)
-            {
-                yolov1->getPredict(labelnum[cls],topN[cls],threshold    ,predict[cls]);
-                yolov1->getGroundTruth(labelnum[cls], data->labels[i].toStdString()   ,g_truth[cls]);
-                test[cls]->run_test(predict[cls], g_truth[cls]);
-            }
-        }
-        for(int cls=0; cls<LABELNUM; cls++)
+    int labelnum[] = {LABEL_BALL, LABEL_GOALPOST};
+    for(int cls=0; cls<LABELNUM; cls++){
+        test = new YOLO_Test();
+        for(int thre=0; thre<100;thre++)
         {
-            Precision[cls].push_back(test[cls]->precision());
-            Recall[cls].push_back(test[cls]->recall());
-            delete(test[cls]);
+            float threshold =  (float)thre / 100.0;
+            for(int i=0; i < data->images.size(); i++){
+                // detect
+                cv::Mat m = cv::imread(data->images[i].toStdString());
+                IplImage ipl = m;
+                yolo->detect(ipl);
+                // test
+                std::vector<YOLO_Detect::bbox_T> predict;
+                std::vector<YOLO_Detect::bbox_T> g_truth;
+                std::string labeltxt = data->labels[i].toStdString();
+                yolo->getPredict(labelnum[cls],threshold,predict);
+                yolo->readLabeltxt(labelnum[cls], labeltxt, g_truth);
+                test->run_test(predict, g_truth);
+                // debug
+                //qDebug() << predict.size();
+                //qDebug() << g_truth.size();
+                qDebug() << test.mIoU;
+            }
+            ui->progressBar->setValue(thre);
         }
-        ui->progressBar->setValue(thre);
+        delete(test);
     }
     delete(data);
-    delete(yolov1);
+    delete(yolo);
     ui->checkOpenImage->setEnabled(true);
 }
 

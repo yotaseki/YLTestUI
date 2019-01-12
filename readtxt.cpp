@@ -3,15 +3,15 @@
 
 YOLO_ReadText::YOLO_ReadText(QString path)
 {
-    YOLOReadtxt(path);
+    readTraintxt(path);
 }
 
 YOLO_ReadText::~YOLO_ReadText(){
 }
 
-void YOLO_ReadText::readtxt(QString path){
+void YOLO_ReadText::readTraintxt(QString path){
     QFile file(path);
-    if(!file.open(QIODevice::YOLOReadOnly)){
+    if(!file.open(QIODevice::ReadOnly)){
         QString errStr = "Open failed. :" + path;
         qDebug() << errStr;
     }
@@ -22,5 +22,14 @@ void YOLO_ReadText::readtxt(QString path){
     inStr = inStr.replace(".jpg", ".txt");
     inStr = inStr.replace(".png", ".txt");
     labels = inStr.split('\n');
+    if(images[images.size()-1].length() == 0)
+    {
+        images.removeLast();
+    }
+    if(labels[labels.size()-1].length() == 0)
+    {
+        labels.removeLast();
+    }
     file.close();
 }
+
