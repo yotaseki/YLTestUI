@@ -31,12 +31,14 @@ void YOLOTestUI::onPushRunTest()
     data = new YOLO_ReadText(ui->lineTestData->text());
     yolo = new YOLO_Detect(cfg, weight );
     YOLO_Test *test;
-
+    
     int labelnum[] = {LABEL_BALL, LABEL_GOALPOST};
     for(int cls=0; cls<LABELNUM; cls++){
-        test = new YOLO_Test();
+        float mAP = 0.0f;
         for(int thre=0; thre<100;thre++)
         {
+            float AP = 0.0f;
+            test = new YOLO_Test();
             float threshold =  (float)thre / 100.0;
             for(int i=0; i < data->images.size(); i++){
                 // detect
@@ -53,15 +55,24 @@ void YOLOTestUI::onPushRunTest()
                 // debug
                 //qDebug() << predict.size();
                 //qDebug() << g_truth.size();
-                qDebug() << test.mIoU;
+                float mIoU;
+                test->getMeanIoU(mIoU);
+                AP += mIoU;
             }
+            AP =  AP / data->images.size();
+            mAP += AP;
+            float precision, recall;
+            test->getPrecision(precision);
+            test->getRecall(recall);
+            qDebug() << "Class:" << cls << ", Threshold:" << thre <<", AP:" << AP << ", Precision:" << precision << ", Recall:" << recall;
             ui->progressBar->setValue(thre);
+            delete(test);
         }
-        delete(test);
+        mAP = mAP / 100;
     }
+    ui->checkOpenImage->setEnabled(true);
     delete(data);
     delete(yolo);
-    ui->checkOpenImage->setEnabled(true);
 }
 
 void YOLOTestUI::onPushSelectWeight()

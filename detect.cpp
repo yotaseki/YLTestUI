@@ -65,6 +65,7 @@ void YOLO_Detect::readLabeltxt(int labelnum, std::string &path, std::vector<bbox
             buf >> line;
             b.h = std::stof(line);
             bboxes.push_back(b);
+            //std::cout << "[G]" << cls << "," << b.x << "," << b.y << "," << b.w << "," << b.h << std::endl;
         }
     }
     ifs.close();

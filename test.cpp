@@ -16,7 +16,7 @@ void YOLO_Test::run_test(vector<YOLO_Detect::bbox_T> &pr,vector<YOLO_Detect::bbo
             int index = -1;
             float distance=9999999999.9f;
             for(int j=0;j<gt.size();j++){
-                float d = calcDistance(gt[i].x, gt[i].y, pr[j].x, pr[j].y);
+                float d = calcDistance(gt[j].x, gt[j].y, pr[i].x, pr[i].y);
                 if(distance > d){
                     distance = d;
                     index = j;
@@ -24,16 +24,18 @@ void YOLO_Test::run_test(vector<YOLO_Detect::bbox_T> &pr,vector<YOLO_Detect::bbo
             }
             // IoU計算
             int X,Y,W,H;
-            X = 448* (gt[i].x - gt[i].w/2);
-            Y = 448* (gt[i].y - gt[i].h/2);
-            W = 448* gt[i].w;
-            H = 448* gt[i].h;
+            X = 448* (pr[i].x - pr[i].w/2);
+            Y = 448* (pr[i].y - pr[i].h/2);
+            W = 448* pr[i].w;
+            H = 448* pr[i].h;
             cv::Rect p(X,Y,W,H);
-            X = 448* (pr[index].x - pr[index].w/2);
-            Y = 448* (pr[index].y - pr[index].h/2);
-            W = 448* pr[index].w;
-            H = 448* pr[index].h;
+            //cout << "[P]" << X << ","<< Y << "," << W << "," << H << endl ;
+            X = 448* (gt[index].x - gt[index].w/2);
+            Y = 448* (gt[index].y - gt[index].h/2);
+            W = 448* gt[index].w;
+            H = 448* gt[index].h;
             cv::Rect g(X,Y,W,H);
+            //cout << "[G]" << X << "," << Y << "," << W << "," << H << endl;
             iou += calcIoU(p,g);
         }
         // TP判定
@@ -67,12 +69,39 @@ float YOLO_Test::calcDistance(float cx1, float cy1, float cx2, float cy2){
 
 float YOLO_Test::calcIoU(cv::Rect &p, cv::Rect &r){
     float iou;
-    cv::Rect over = p|r;
+    cv::Rect over = p & r;
     int total_area = (p.width*p.height) + (r.width*r.height);
     int overrap_area = over.width*over.height;
     if(total_area + overrap_area == 0){
         return 0.0;
     }
-    iou = overrap_area / (overrap_area + total_area);
+    iou = (float)overrap_area / (total_area - overrap_area);
     return iou;
+}
+
+void YOLO_Test::getMeanIoU(float &mIoU)
+{
+    mIoU = this->mIoU;
+}
+
+void YOLO_Test::getPrecision(float &precision)
+{
+    if( (TP+FP)==0 )
+    {
+        precision = 0.0f;
+    }
+    else{
+        precision = (float)TP / (TP+FP);
+    }
+}
+
+void YOLO_Test::getRecall(float &recall)
+{
+    if( (TP+FN)==0 )
+    {
+        recall = 0.0f;
+    }
+    else{
+        recall = (float)TP / (TP+FN);
+    }
 }
