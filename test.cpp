@@ -92,6 +92,8 @@ void YOLO_Test::getPrecision(float &precision)
     }
     else{
         precision = (float)TP / (TP+FP);
+        //std::cout << "precision = TP / (TP + FP)" << std::endl;
+        //std::cout << precision << "=" << TP << "/ (" << TP <<" + " << FP << ")" << std::endl;
     }
 }
 
@@ -103,5 +105,7 @@ void YOLO_Test::getRecall(float &recall)
     }
     else{
         recall = (float)TP / (TP+FN);
+        //std::cout << "recall = TP / (TP + FN)" << std::endl;
+        //std::cout << recall << "=" << TP << "/ (" << TP <<" + " << FN << ")" << std::endl;
     }
 }

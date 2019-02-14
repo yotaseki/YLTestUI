@@ -89,7 +89,7 @@ void YOLOTestUI::onPushSelectConfig()
 
 void YOLOTestUI::onPushSelectTestData()
 {
-    QFileInfo testdata = myq.selectFile(currentdir, QString("*.txt"));
+    QFileInfo testdata = myq.selectFile(currentdir, QString("*"));
     ui->lineTestData->setText(testdata.filePath());
     enableRun();
 }
@@ -110,21 +110,21 @@ bool YOLOTestUI::enableRun()
     QFileInfo checkConfig(ui->lineConfig->text());
     QFileInfo checkTestData(ui->lineTestData->text());
     bool ret = true;
-    if(checkWeight.isFile() && checkWeight.exists()){
+    if(checkWeight.isFile() && (checkWeight.completeSuffix() == "weights") ){
         ui->labelWeights->setStyleSheet("background-color:green;");
     }
     else{
         ret = false;
         ui->labelWeights->setStyleSheet("background-color:red;");
     }
-    if(checkConfig.isFile() && checkConfig.exists()){
+    if(checkConfig.isFile() && (checkConfig.completeSuffix() == "cfg") ){
         ui->labelConfig->setStyleSheet("background-color:green;");
     }
     else{
         ret = false;
         ui->labelConfig->setStyleSheet("background-color:red;");
     }
-    if(checkTestData.isFile() && checkTestData.exists()){
+    if(checkTestData.isFile() && checkTestData.exists() ){
         ui->labelTestData->setStyleSheet("background-color:green;");
     }
     else{
