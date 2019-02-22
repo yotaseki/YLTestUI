@@ -17,6 +17,8 @@ set(YOLOTestUI_SRCS
     ./readtxt.h
     ./test.cpp
     ./test.h
+    ./plotGraph.cpp
+    ./plotGraph.h
 	)
 set(YOLOTestUI_MOC_HDRS
     ./YOLOTestUI.h

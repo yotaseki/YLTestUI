@@ -8,6 +8,7 @@
 #include "./MyQclass.h"
 #include "./readtxt.h"
 #include "./test.h"
+#include "./plotGraph.h"
 
 namespace Ui {
 class YOLOTestUI;

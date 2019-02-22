@@ -35,6 +35,9 @@ void YOLOTestUI::onPushRunTest()
     int labelnum[] = {LABEL_BALL, LABEL_GOALPOST};
     for(int cls=0; cls<LABELNUM; cls++){
         float mAP = 0.0f;
+        PlotGraph pg;
+        std::vector<double> Precision;
+        std::vector<double> Recall;
         for(int thre=0; thre<100;thre++)
         {
             float AP = 0.0f;
@@ -64,10 +67,16 @@ void YOLOTestUI::onPushRunTest()
             float precision, recall;
             test->getPrecision(precision);
             test->getRecall(recall);
+            Precision.push_back((double)precision);
+            Recall.push_back((double)recall);
             qDebug() << "Class:" << cls << ", Threshold:" << thre <<", AP:" << AP << ", Precision:" << precision << ", Recall:" << recall;
             ui->progressBar->setValue(thre);
             delete(test);
         }
+        std::string fn = "graph_cls" + std::to_string(cls) + ".png";
+        pg.set_range(0.0,1.0,0);
+        pg.set_range(0.0,1.0,1);
+        pg.plot(Precision, Recall, fn);
         mAP = mAP / 100;
     }
     ui->checkOpenImage->setEnabled(true);
