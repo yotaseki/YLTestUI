@@ -6,6 +6,7 @@ YOLO_Test::YOLO_Test():TP(0),TN(0),FP(0),FN(0),test_count(0),sum_iou(0.0),mIoU(0
 }
 
 YOLO_Test::~YOLO_Test(){
+    //std::cout << "TP:" << TP<< ",TN:" << TN<< ",FP:" << FP<< ",FN:" << FN <<std::endl;
 }
 
 bool YOLO_Test::Is_pixel_in_the_bbox(int x, int y, YOLO_Detect::bbox_T &bbox, int img_w, int img_h)
@@ -150,7 +151,7 @@ void YOLO_Test::getPrecision(float &precision)
 {
     if( (TP+FP)==0 )
     {
-        precision = 0.0f;
+        precision = 1.0f;
     }
     else{
         precision = (float)TP / (TP+FP);
@@ -163,7 +164,7 @@ void YOLO_Test::getRecall(float &recall)
 {
     if( (TP+FN)==0 )
     {
-        recall = 0.0f;
+        recall = 1.0f;
     }
     else{
         recall = (float)TP / (TP+FN);

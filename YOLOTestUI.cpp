@@ -69,7 +69,7 @@ void YOLOTestUI::onPushRunTest()
             test->getRecall(recall);
             Precision.push_back((double)precision);
             Recall.push_back((double)recall);
-            qDebug() << "Class:" << cls << ", Threshold:" << thre <<", AP:" << AP << ", Precision:" << precision << ", Recall:" << recall;
+            qDebug() << "Class:" << cls << ",Threshold:" << thre <<",AP:" << AP << ",Precision:" << precision << ",Recall:" << recall;
             ui->progressBar->setValue(thre);
             delete(test);
         }
