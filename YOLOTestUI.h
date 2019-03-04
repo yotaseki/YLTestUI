@@ -26,6 +26,7 @@ private slots:
     void onPushSelectWeight();
     void onPushSelectConfig();
     void onPushSelectTestData();
+    void onComboIndexChanged();
     void stateChangedCheckOpenImage();
     bool enableRun();
 

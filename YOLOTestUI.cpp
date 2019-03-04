@@ -21,6 +21,19 @@ void YOLOTestUI::connectSignals()
     connect(ui->lineWeights, SIGNAL(textChanged(QString)), this, SLOT(enableRun()));
     connect(ui->lineConfig, SIGNAL(textChanged(QString)), this, SLOT(enableRun()));
     connect(ui->lineTestData, SIGNAL(textChanged(QString)), this, SLOT(enableRun()));
+    connect(ui->comboClass, SIGNAL(currentIndexChanged(int)), this, SLOT(onComboIndexChanged()));
+}
+
+void YOLOTestUI::onComboIndexChanged()
+{
+    QString fn = QString("graph_cls%1").arg(ui->comboClass->currentIndex());
+    fn = fn + ".png";
+    ui->progressBar->setValue(100);
+    QImage *mImage = new QImage();
+    mImage->load( fn );
+    QPixmap pMap = QPixmap::fromImage(*mImage);
+    pMap = pMap.scaled(ui->labelGraph->size(), Qt::KeepAspectRatio );
+    ui->labelGraph->setPixmap( pMap );
 }
 
 void YOLOTestUI::onPushRunTest()
@@ -28,6 +41,7 @@ void YOLOTestUI::onPushRunTest()
     std::string cfg = ui->lineConfig->text().toStdString();
     std::string weight = ui->lineWeights->text().toStdString();
     ui->progressBar->setValue(0);
+    ui->plainDebugLog->appendPlainText("Forward... (please wait)");
     data = new YOLO_ReadText(ui->lineTestData->text());
     yolo = new YOLO_Detect(cfg, weight );
     YOLO_Test *test;
@@ -35,7 +49,6 @@ void YOLOTestUI::onPushRunTest()
     int labelnum[] = {LABEL_BALL, LABEL_GOALPOST};
     std::vector<std::vector<YOLO_Detect::bbox_T> > predict[LABELNUM];
     std::vector<std::vector<YOLO_Detect::bbox_T> > g_truth[LABELNUM];
-    qDebug() << "Forward...";
     for(int i=0; i < data->images.size(); i++){
         // detect
         cv::Mat m = cv::imread(data->images[i].toStdString());
@@ -52,7 +65,7 @@ void YOLOTestUI::onPushRunTest()
             g_truth[cls].push_back(g);
         }
     }
-    qDebug() << "Completed!";
+    ui->plainDebugLog->appendPlainText("Completed");
     for(int cls=0; cls<LABELNUM; cls++){
         float mAP = 0.0f;
         PlotGraph pg;
@@ -79,11 +92,13 @@ void YOLOTestUI::onPushRunTest()
             test->getRecall(recall);
             Precision.push_back((double)precision);
             Recall.push_back((double)recall);
-            qDebug() << "Class:" << cls << ",Threshold:" << thre <<",AP:" << AP << ",Precision:" << precision << ",Recall:" << recall;
+            ui->plainDebugLog->appendPlainText(QString("Class:%1,Threshold:%2,AP:%3,Precision:%4,Recall:%5").arg(cls).arg(thre).arg(AP).arg(precision).arg(recall));
+            //qDebug() << "Class:" << cls << ",Threshold:" << thre <<",AP:" << AP << ",Precision:" << precision << ",Recall:" << recall;
             ui->progressBar->setValue( (cls*(100/LABELNUM)) + (thre/LABELNUM));
             delete(test);
             //qDebug() << "Thre:" << thre;
         }
+        if(cls>0)ui->comboClass->addItem(QString("class %1").arg(cls) );
         std::string fn = "graph_cls" + std::to_string(cls) + ".png";
         pg.set_range(0.0,1.0,0);
         pg.set_range(0.0,1.0,1);
@@ -91,6 +106,12 @@ void YOLOTestUI::onPushRunTest()
         mAP = mAP / 100;
     }
     ui->progressBar->setValue(100);
+    QImage *mImage = new QImage();
+    mImage->load( "graph_cls0.png" );
+
+    QPixmap pMap = QPixmap::fromImage(*mImage);
+    pMap = pMap.scaled(ui->labelGraph->size(), Qt::KeepAspectRatio );
+    ui->labelGraph->setPixmap( pMap );
     ui->checkOpenImage->setEnabled(true);
     delete(data);
     delete(yolo);
