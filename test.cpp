@@ -9,46 +9,44 @@ YOLO_Test::~YOLO_Test(){
     //std::cout << "TP:" << TP<< ",TN:" << TN<< ",FP:" << FP<< ",FN:" << FN <<std::endl;
 }
 
-bool YOLO_Test::Is_pixel_in_the_bbox(int x, int y, YOLO_Detect::bbox_T &bbox, int img_w, int img_h)
+void YOLO_Test::draw_bbox(cv::Mat &mat, YOLO_Detect::bbox_T &bbox, int img_w, int img_h)
 {
     int left,top,right,bottom;
     left = img_w * (bbox.x - bbox.w/2);
     top  = img_h * (bbox.y - bbox.h/2);
     right  = img_w * (bbox.x + bbox.w/2);
     bottom = img_h * (bbox.y + bbox.h/2);
-    if( !((left<=x)&&(x<=right)) ) return false;
-    if( !((top<=y)&&(y<=bottom)) ) return false;
-    return true;
+    cv::rectangle(mat,cv::Point(left,top),cv::Point(right,bottom),255,CV_FILLED);
 }
 
 void YOLO_Test::run_test(vector<YOLO_Detect::bbox_T> &pr,vector<YOLO_Detect::bbox_T> &gt, int threshold){
-    float thre = (float)threshold/100.0;
     int img_w = 640;
     int img_h = 480;
+    float thre = (float)threshold/100.0;
     int cnt_area = 0;
     int cnt_overrap = 0;
     float iou = 0.0;
-    if( (gt.size()>0) && (pr.size()>0) ){
+    // threshold
+    vector<YOLO_Detect::bbox_T> pr_thre;
+    for(int i=0;i<pr.size();i++){
+        if(pr[i].score > thre){
+            pr_thre.push_back(pr[i]);
+        }
+    }
+    // classify
+    if( (gt.size()>0) && (pr_thre.size()>0) ){
+        cv::Mat pr_area = cv::Mat::zeros(img_h,img_w,CV_8U);
+        cv::Mat gt_area = cv::Mat::zeros(img_h,img_w,CV_8U);
+        for(int i=0;i<pr_thre.size();i++){
+            draw_bbox(pr_area, pr_thre[i],img_w,img_h);
+        }    
+        for(int i=0;i<gt.size();i++){
+            draw_bbox(gt_area, gt[i],img_w,img_h);
+        }
         for(int x=0;x<img_w;x++){
             for(int y=0;y<img_h;y++){
-                bool pr_bin = false;
-                for(int i=0;i<pr.size();i++){
-                    if(pr[i].score >= thre){
-                        pr_bin = Is_pixel_in_the_bbox(x,y,pr[i],img_w,img_h);
-                    }
-                    if(pr_bin == true){
-                        break;
-                    }
-                }
-                bool gt_bin = false;
-                for(int i=0;i<gt.size();i++){
-                    gt_bin = Is_pixel_in_the_bbox(x,y,gt[i],img_w,img_h);
-                    if(gt_bin == true){
-                        break;
-                    }
-                }
-                if( pr_bin || gt_bin)cnt_area++;    // 総面積
-                if( pr_bin && gt_bin)cnt_overrap++; // 重なっている面積
+                if( pr_area.at<unsigned char>(y,x) || gt_area.at<unsigned char>(y,x) )cnt_area++;    // 総面積
+                if( pr_area.at<unsigned char>(y,x) && gt_area.at<unsigned char>(y,x) )cnt_overrap++; // 重なっている面積
             }
         }
         float iou = (float)cnt_overrap / cnt_area;
@@ -62,13 +60,17 @@ void YOLO_Test::run_test(vector<YOLO_Detect::bbox_T> &pr,vector<YOLO_Detect::bbo
             FP++;
         };
     }
-    else if( (gt.size()==0) && (pr.size()==0) ){
+    else if( (gt.size()==0) && (pr_thre.size()==0) ){
         TN++;
     }
-    else if( (gt.size()>0) && (pr.size()==0) ){
+    else if( (gt.size()>0) && (pr_thre.size()==0) ){
+        float iou = 0.0;
+        sum_iou = sum_iou + iou;
+        test_count = test_count + 1;
+        mIoU = sum_iou / test_count;
         FN++;
     }
-    else if( (gt.size()==0) && (pr.size()>0) ){
+    else if( (gt.size()==0) && (pr_thre.size()>0) ){
         FP++;
     }
 }

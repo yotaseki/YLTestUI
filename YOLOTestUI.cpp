@@ -37,11 +37,11 @@ void YOLOTestUI::onPushRunTest()
     std::vector<std::vector<YOLO_Detect::bbox_T> > g_truth[LABELNUM];
     qDebug() << "Forward...";
     for(int i=0; i < data->images.size(); i++){
+        // detect
+        cv::Mat m = cv::imread(data->images[i].toStdString());
+        IplImage ipl = m;
+        yolo->detect(ipl);
         for(int cls=0; cls<LABELNUM; cls++){
-            // detect
-            cv::Mat m = cv::imread(data->images[i].toStdString());
-            IplImage ipl = m;
-            yolo->detect(ipl);
             // test
             std::vector<YOLO_Detect::bbox_T> p;
             std::vector<YOLO_Detect::bbox_T> g;
@@ -80,7 +80,7 @@ void YOLOTestUI::onPushRunTest()
             Precision.push_back((double)precision);
             Recall.push_back((double)recall);
             qDebug() << "Class:" << cls << ",Threshold:" << thre <<",AP:" << AP << ",Precision:" << precision << ",Recall:" << recall;
-            ui->progressBar->setValue((cls*(thre/LABELNUM)) + (thre/LABELNUM));
+            ui->progressBar->setValue( (cls*(100/LABELNUM)) + (thre/LABELNUM));
             delete(test);
             //qDebug() << "Thre:" << thre;
         }
@@ -90,6 +90,7 @@ void YOLOTestUI::onPushRunTest()
         pg.plot(Precision, Recall, fn);
         mAP = mAP / 100;
     }
+    ui->progressBar->setValue(100);
     ui->checkOpenImage->setEnabled(true);
     delete(data);
     delete(yolo);
