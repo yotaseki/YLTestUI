@@ -8,7 +8,7 @@ public:
     YOLO_Test();
     ~YOLO_Test();
     bool Is_pixel_in_the_bbox(int x,int y, YOLO_Detect::bbox_T &bbox,int img_w,int img_h);
-    void run_test(std::vector<YOLO_Detect::bbox_T> &predict, std::vector<YOLO_Detect::bbox_T> &truth);
+    void run_test(std::vector<YOLO_Detect::bbox_T> &predict, std::vector<YOLO_Detect::bbox_T> &truth, int threshold);
     /*
     float calcDistance(float cx1, float cy1, float cx2, float cy2);
     float calcIoU(cv::Rect &p, cv::Rect &g);

@@ -33,34 +33,44 @@ void YOLOTestUI::onPushRunTest()
     YOLO_Test *test;
     
     int labelnum[] = {LABEL_BALL, LABEL_GOALPOST};
+    std::vector<std::vector<YOLO_Detect::bbox_T> > predict[LABELNUM];
+    std::vector<std::vector<YOLO_Detect::bbox_T> > g_truth[LABELNUM];
+    qDebug() << "Forward...";
+    for(int i=0; i < data->images.size(); i++){
+        for(int cls=0; cls<LABELNUM; cls++){
+            // detect
+            cv::Mat m = cv::imread(data->images[i].toStdString());
+            IplImage ipl = m;
+            yolo->detect(ipl);
+            // test
+            std::vector<YOLO_Detect::bbox_T> p;
+            std::vector<YOLO_Detect::bbox_T> g;
+            std::string labeltxt = data->labels[i].toStdString();
+            yolo->getPredict(labelnum[cls],0.0,p);
+            yolo->readLabeltxt(labelnum[cls], labeltxt, g);
+            predict[cls].push_back(p);
+            g_truth[cls].push_back(g);
+        }
+    }
+    qDebug() << "Completed!";
     for(int cls=0; cls<LABELNUM; cls++){
         float mAP = 0.0f;
         PlotGraph pg;
         std::vector<double> Precision;
         std::vector<double> Recall;
-        for(int thre=0; thre<100;thre++)
-        {
+        for(int thre=0; thre<100;thre++){
             float AP = 0.0f;
             test = new YOLO_Test();
             float threshold =  (float)thre / 100.0;
             for(int i=0; i < data->images.size(); i++){
-                // detect
-                cv::Mat m = cv::imread(data->images[i].toStdString());
-                IplImage ipl = m;
-                yolo->detect(ipl);
-                // test
-                std::vector<YOLO_Detect::bbox_T> predict;
-                std::vector<YOLO_Detect::bbox_T> g_truth;
-                std::string labeltxt = data->labels[i].toStdString();
-                yolo->getPredict(labelnum[cls],threshold,predict);
-                yolo->readLabeltxt(labelnum[cls], labeltxt, g_truth);
-                test->run_test(predict, g_truth);
+                test->run_test(predict[cls][i], g_truth[cls][i], thre);
                 // debug
                 //qDebug() << predict.size();
                 //qDebug() << g_truth.size();
                 float mIoU;
                 test->getMeanIoU(mIoU);
                 AP += mIoU;
+                // qDebug() << "Image:" << i << ",Pred:"<< predict[cls][i].size() << ",Gth:" << g_truth[cls][i].size();
             }
             AP =  AP / data->images.size();
             mAP += AP;
@@ -72,6 +82,7 @@ void YOLOTestUI::onPushRunTest()
             qDebug() << "Class:" << cls << ",Threshold:" << thre <<",AP:" << AP << ",Precision:" << precision << ",Recall:" << recall;
             ui->progressBar->setValue((cls*(thre/LABELNUM)) + (thre/LABELNUM));
             delete(test);
+            //qDebug() << "Thre:" << thre;
         }
         std::string fn = "graph_cls" + std::to_string(cls) + ".png";
         pg.set_range(0.0,1.0,0);

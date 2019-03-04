@@ -16,15 +16,13 @@ bool YOLO_Test::Is_pixel_in_the_bbox(int x, int y, YOLO_Detect::bbox_T &bbox, in
     top  = img_h * (bbox.y - bbox.h/2);
     right  = img_w * (bbox.x + bbox.w/2);
     bottom = img_h * (bbox.y + bbox.h/2);
-    bool x_bin = false;
-    if( (left<=x)&&(x<=right) ) x_bin = true;
-    bool y_bin = false;
-    if( (top<=y)&&(y<=bottom) ) y_bin = true;
-    bool ret = x_bin && y_bin;
-    return ret;
+    if( !((left<=x)&&(x<=right)) ) return false;
+    if( !((top<=y)&&(y<=bottom)) ) return false;
+    return true;
 }
 
-void YOLO_Test::run_test(vector<YOLO_Detect::bbox_T> &pr,vector<YOLO_Detect::bbox_T> &gt){
+void YOLO_Test::run_test(vector<YOLO_Detect::bbox_T> &pr,vector<YOLO_Detect::bbox_T> &gt, int threshold){
+    float thre = (float)threshold/100.0;
     int img_w = 640;
     int img_h = 480;
     int cnt_area = 0;
@@ -35,13 +33,19 @@ void YOLO_Test::run_test(vector<YOLO_Detect::bbox_T> &pr,vector<YOLO_Detect::bbo
             for(int y=0;y<img_h;y++){
                 bool pr_bin = false;
                 for(int i=0;i<pr.size();i++){
-                    pr_bin = Is_pixel_in_the_bbox(x,y,pr[i],img_w,img_h);
-                    if(pr_bin == true)break;
+                    if(pr[i].score >= thre){
+                        pr_bin = Is_pixel_in_the_bbox(x,y,pr[i],img_w,img_h);
+                    }
+                    if(pr_bin == true){
+                        break;
+                    }
                 }
                 bool gt_bin = false;
                 for(int i=0;i<gt.size();i++){
                     gt_bin = Is_pixel_in_the_bbox(x,y,gt[i],img_w,img_h);
-                    if(gt_bin == true)break;
+                    if(gt_bin == true){
+                        break;
+                    }
                 }
                 if( pr_bin || gt_bin)cnt_area++;    // 総面積
                 if( pr_bin && gt_bin)cnt_overrap++; // 重なっている面積
