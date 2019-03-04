@@ -70,7 +70,7 @@ void YOLOTestUI::onPushRunTest()
             Precision.push_back((double)precision);
             Recall.push_back((double)recall);
             qDebug() << "Class:" << cls << ",Threshold:" << thre <<",AP:" << AP << ",Precision:" << precision << ",Recall:" << recall;
-            ui->progressBar->setValue(thre);
+            ui->progressBar->setValue((cls*(thre/LABELNUM)) + (thre/LABELNUM));
             delete(test);
         }
         std::string fn = "graph_cls" + std::to_string(cls) + ".png";
