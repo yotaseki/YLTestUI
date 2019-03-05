@@ -99,7 +99,11 @@
             <height>243</height>
            </rect>
           </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_6"/>
+          <layout class="QHBoxLayout" name="horizontalLayout_6">
+           <item>
+            <layout class="QHBoxLayout" name="HLayoutVisResults"/>
+           </item>
+          </layout>
          </widget>
         </widget>
        </item>

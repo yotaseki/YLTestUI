@@ -43,8 +43,12 @@ private:
     YOLO_Detect *yolo;
     YOLO_ReadText *data;
     std::vector<cv::Mat> images;
+    std::vector<cv::Mat> images_result;
+    std::vector<QString> images_path;
     std::vector<std::vector<std::vector<YOLO_Detect::bbox_T> > > predict;
     std::vector<std::vector<std::vector<YOLO_Detect::bbox_T> > > g_truth;
+    void displayResultImageOnScrollVisResults(int page);
+    void drawBbox(cv::Mat &src, cv::Mat &dst, YOLO_Detect::bbox_T &bbox);
 };
 
 #endif // YOLOTESTUI_H
