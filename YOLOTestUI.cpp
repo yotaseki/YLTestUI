@@ -43,7 +43,6 @@ void YOLOTestUI::onPushRunTest()
     std::string cfg = ui->lineConfig->text().toStdString();
     std::string weight = ui->lineWeights->text().toStdString();
     ui->progressBar->setValue(0);
-    ui->plainDebugLog->appendPlainText("Forward... (please wait)");
     data = new YOLO_ReadText(ui->lineTestData->text());
     yolo = new YOLO_Detect(cfg, weight );
     YOLO_Test *test;
@@ -53,6 +52,7 @@ void YOLOTestUI::onPushRunTest()
     g_truth.clear();
     predict.resize(LABELNUM);
     g_truth.resize(LABELNUM);
+    ui->plainDebugLog->appendPlainText("Forward... (please wait)");
     for(int i=0; i < data->images.size(); i++){
         // detect
         cv::Mat m = cv::imread(data->images[i].toStdString());
@@ -69,6 +69,7 @@ void YOLOTestUI::onPushRunTest()
             g_truth[cls].push_back(g);
         }
         images.push_back(m);
+        ui->progressBar->setValue( (i/data->images.size())/2 ); // ~50
     }
     ui->plainDebugLog->appendPlainText("Completed");
     for(int cls=0; cls<LABELNUM; cls++){
@@ -99,7 +100,7 @@ void YOLOTestUI::onPushRunTest()
             Recall.push_back((double)recall);
             ui->plainDebugLog->appendPlainText(QString("Class:%1,Threshold:%2,AP:%3,Precision:%4,Recall:%5").arg(cls).arg(thre).arg(AP).arg(precision).arg(recall));
             //qDebug() << "Class:" << cls << ",Threshold:" << thre <<",AP:" << AP << ",Precision:" << precision << ",Recall:" << recall;
-            ui->progressBar->setValue( (cls*(100/LABELNUM)) + (thre/LABELNUM));
+            ui->progressBar->setValue(50+( (cls*(100/LABELNUM)) + (thre/LABELNUM) )/2); // 50 ~100
             delete(test);
             //qDebug() << "Thre:" << thre;
         }
@@ -194,3 +195,4 @@ bool YOLOTestUI::enableRun()
     }
     return ret;
 }
+
