@@ -25,7 +25,8 @@ HEADERS  += YOLOTestUI.h \
     readtxt.h \
     test.h
 
-FORMS    += YOLOTestUI.ui
+FORMS    += YOLOTestUI.ui \
+    visbboxui.ui
 
 
 LIBS += -ldarknet -lopencv_core -lopencv_highgui -lopencv_imgproc

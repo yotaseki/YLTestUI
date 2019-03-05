@@ -1,14 +1,16 @@
 #include "YOLOTestUI.h"
-#include "ui_YOLOTestUI.h"
 
 YOLOTestUI::YOLOTestUI(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::YOLOTestUI)
+    ui(new Ui::YOLOTestUI),
+    vis_ui(new Ui::VisBboxWidget)
 {
     ui->setupUi(this);
+    vis_ui->setupUi(&vis_widget);
     connectSignals();
     currentdir = QDir::homePath();
     enableRun();
+    //ui->checkOpenImage->setEnabled(true);
 }
 
 void YOLOTestUI::connectSignals()
@@ -46,9 +48,11 @@ void YOLOTestUI::onPushRunTest()
     yolo = new YOLO_Detect(cfg, weight );
     YOLO_Test *test;
     
-    int labelnum[] = {LABEL_BALL, LABEL_GOALPOST};
-    std::vector<std::vector<YOLO_Detect::bbox_T> > predict[LABELNUM];
-    std::vector<std::vector<YOLO_Detect::bbox_T> > g_truth[LABELNUM];
+    images.clear();
+    predict.clear();
+    g_truth.clear();
+    predict.resize(LABELNUM);
+    g_truth.resize(LABELNUM);
     for(int i=0; i < data->images.size(); i++){
         // detect
         cv::Mat m = cv::imread(data->images[i].toStdString());
@@ -59,11 +63,12 @@ void YOLOTestUI::onPushRunTest()
             std::vector<YOLO_Detect::bbox_T> p;
             std::vector<YOLO_Detect::bbox_T> g;
             std::string labeltxt = data->labels[i].toStdString();
-            yolo->getPredict(labelnum[cls],0.0,p);
-            yolo->readLabeltxt(labelnum[cls], labeltxt, g);
+            yolo->getPredict(cls,0.0,p);
+            yolo->readLabeltxt(cls, labeltxt, g);
             predict[cls].push_back(p);
             g_truth[cls].push_back(g);
         }
+        images.push_back(m);
     }
     ui->plainDebugLog->appendPlainText("Completed");
     for(int cls=0; cls<LABELNUM; cls++){
@@ -138,12 +143,18 @@ void YOLOTestUI::onPushSelectTestData()
 
 void YOLOTestUI::stateChangedCheckOpenImage()
 {
-
+    if(ui->checkOpenImage->checkState() == Qt::Checked){
+        vis_widget.show();
+    }else
+    {
+        vis_widget.close();
+    }
 }
 
 YOLOTestUI::~YOLOTestUI()
 {
     delete ui;
+    delete vis_ui;
 }
 
 bool YOLOTestUI::enableRun()

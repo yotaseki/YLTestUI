@@ -9,9 +9,12 @@
 #include "./readtxt.h"
 #include "./test.h"
 #include "./plotGraph.h"
+#include "ui_YOLOTestUI.h"
+#include "ui_VisBboxUI.h"
 
 namespace Ui {
 class YOLOTestUI;
+class VisBboxWidget;
 }
 
 class YOLOTestUI : public QMainWindow
@@ -32,11 +35,16 @@ private slots:
 
 private:
     Ui::YOLOTestUI *ui;
+    Ui::VisBboxWidget *vis_ui;
+    QWidget vis_widget;
     void connectSignals();
     MyQclass myq;
     QDir currentdir;
     YOLO_Detect *yolo;
     YOLO_ReadText *data;
+    std::vector<cv::Mat> images;
+    std::vector<std::vector<std::vector<YOLO_Detect::bbox_T> > > predict;
+    std::vector<std::vector<std::vector<YOLO_Detect::bbox_T> > > g_truth;
 };
 
 #endif // YOLOTESTUI_H

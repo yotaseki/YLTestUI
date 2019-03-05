@@ -25,6 +25,7 @@ set(YOLOTestUI_MOC_HDRS
 	)
 set(YOLOTestUI_UIS
     ./YOLOTestUI.ui
+    ./VisBboxUI.ui
 	)
 
 add_executable(YOLOTestUI
