@@ -1,4 +1,5 @@
 #include "YOLOTestUI.h"
+#include <chrono>
 
 YOLOTestUI::YOLOTestUI(QWidget *parent) :
     QMainWindow(parent),
@@ -44,6 +45,8 @@ void YOLOTestUI::onComboIndexChanged()
 
 void YOLOTestUI::onPushRunTest()
 {
+    std::chrono::system_clock::time_point  start, end;
+    // 処理
     std::string cfg = ui->lineConfig->text().toStdString();
     std::string weight = ui->lineWeights->text().toStdString();
     ui->progressBar->setValue(0);
@@ -58,11 +61,15 @@ void YOLOTestUI::onPushRunTest()
     predict.resize(LABELNUM);
     g_truth.resize(LABELNUM);
     ui->plainDebugLog->appendPlainText("Forward... (please wait)");
+    double elapsed = .0;
     for(int i=0; i < data->images.size(); i++){
         // detect
         cv::Mat m = cv::imread(data->images[i].toStdString());
         IplImage ipl = m;
+        start = std::chrono::system_clock::now(); // 計測開始時間
         yolo->detect(ipl);
+        end = std::chrono::system_clock::now();  // 計測終了時間
+        elapsed += std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count(); //処理に要した時間をミリ秒に変換
         for(int cls=0; cls<LABELNUM; cls++){
             // test
             std::vector<YOLO_Detect::bbox_T> p;
@@ -77,6 +84,8 @@ void YOLOTestUI::onPushRunTest()
         images_path.push_back(data->images[i]);
         ui->progressBar->setValue( (i/data->images.size())/2 ); // ~50
     }
+    elapsed = elapsed / data->images.size();
+    qDebug() << "Mean Elapsed:" << elapsed ;
     ui->plainDebugLog->appendPlainText("Completed");
     for(int cls=0; cls<LABELNUM; cls++){
         float mAP = 0.0f;
@@ -242,19 +251,19 @@ void YOLOTestUI::displayResultImageOnScrollVisResults(int page)
         QFileInfo qfi(images_path[idx]);
         vis_fname[i].setText(qfi.baseName());
         // bbox-image
-        vis_img[i].setGeometry(1,1,160,120);
-        vis_img[i].setMinimumSize(QSize(160,120));
         cv::Mat res;
         drawBbox(images[idx], res, predict[0][idx], g_truth[0][idx]);
         drawBbox(images[idx], res, predict[1][idx], g_truth[1][idx]);
         QPixmap pMap = myq.MatBGR2pixmap(res);
         pMap = pMap.scaled(vis_img[i].size(), Qt::KeepAspectRatio );
         vis_img[i].setPixmap( pMap );
+        vis_img[i].setGeometry(1,1,160,120);
+        vis_img[i].setMinimumSize(QSize(160,120));
         // layout
-        vis_img[i].setGeometry(1,1,160,60);
-        vis_img[i].setMaximumSize(QSize(160,60));
         vis_vlay[i].addWidget(&vis_img[i]);
         vis_vlay[i].addWidget(&vis_fname[i]);
         vis_ui->HLayoutVisResults->addLayout(&vis_vlay[i]);
+        vis_img[i].setGeometry(1,1,160,60);
+        vis_img[i].setMaximumSize(QSize(160,60));
     }
 }
