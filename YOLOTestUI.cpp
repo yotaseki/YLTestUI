@@ -58,19 +58,20 @@ void YOLOTestUI::onPushRunTest()
     images_path.clear();
     predict.clear();
     g_truth.clear();
-    predict.resize(LABELNUM);
-    g_truth.resize(LABELNUM);
+    int classNum = yolo->retClassNum();
+    predict.resize(classNum);
+    g_truth.resize(classNum);
     ui->plainDebugLog->appendPlainText("Forward... (please wait)");
     double elapsed = .0;
     for(int i=0; i < data->images.size(); i++){
         // detect
         cv::Mat m = cv::imread(data->images[i].toStdString());
-        IplImage ipl = m;
-        start = std::chrono::system_clock::now(); // 計測開始時間
-        yolo->detect(ipl);
-        end = std::chrono::system_clock::now();  // 計測終了時間
-        elapsed += std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count(); //処理に要した時間をミリ秒に変換
-        for(int cls=0; cls<LABELNUM; cls++){
+        start = std::chrono::system_clock::now();
+        qDebug() << "detect";
+        yolo->detect(m);
+        end = std::chrono::system_clock::now();
+        elapsed += std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
+        for(int cls=0; cls<classNum; cls++){
             // test
             std::vector<YOLO_Detect::bbox_T> p;
             std::vector<YOLO_Detect::bbox_T> g;
@@ -87,7 +88,7 @@ void YOLOTestUI::onPushRunTest()
     elapsed = elapsed / data->images.size();
     qDebug() << "Mean Elapsed:" << elapsed ;
     ui->plainDebugLog->appendPlainText("Completed");
-    for(int cls=0; cls<LABELNUM; cls++){
+    for(int cls=0; cls<classNum; cls++){
         float mAP = 0.0f;
         PlotGraph pg;
         std::vector<double> Precision;
@@ -115,7 +116,7 @@ void YOLOTestUI::onPushRunTest()
             Recall.push_back((double)recall);
             ui->plainDebugLog->appendPlainText(QString("Class:%1,Threshold:%2,AP:%3,Precision:%4,Recall:%5").arg(cls).arg(thre).arg(AP).arg(precision).arg(recall));
             //qDebug() << "Class:" << cls << ",Threshold:" << thre <<",AP:" << AP << ",Precision:" << precision << ",Recall:" << recall;
-            ui->progressBar->setValue(50+( (cls*(100/LABELNUM)) + (thre/LABELNUM) )/2); // 50 ~100
+            ui->progressBar->setValue(50+( (cls*(100/classNum)) + (thre/classNum) )/2); // 50 ~100
             delete(test);
             //qDebug() << "Thre:" << thre;
         }

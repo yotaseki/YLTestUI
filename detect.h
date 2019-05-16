@@ -16,15 +16,15 @@ public:
         float score;
     }bbox;
 
-    YOLO_Detect(std::string &weight, std::string &cfg, std::vector<float> &thresholds);
+    YOLO_Detect(std::string &weight, std::string &cfg);
     ~YOLO_Detect();
-    void setThreshold(std::vector<float> &thresholds);
     void detect(cv::Mat &src);
-    void getPredict(int labelnum, float threshold, std::vector<bbox_T> &bboxes);
-    void readLabeltxt(int labelnum, std::string &path, std::vector<bbox_T> &bboxes);
+    void getPredict(int cls, float threshold, std::vector<bbox_T> &bboxes);
+    void readLabeltxt(int cls, std::string &path, std::vector<bbox_T> &bboxes);
+    int retClassNum();
 private:
+    int num_class;
     network *net;
     layer layers;
-    std::vector<float> thre;
     std::vector<std::vector <bbox_T> > bboxes;
 };
