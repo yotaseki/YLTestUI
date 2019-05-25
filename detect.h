@@ -22,6 +22,7 @@ public:
     void getPredict(int cls, float threshold, std::vector<bbox_T> &bboxes);
     void readLabeltxt(int cls, std::string &path, std::vector<bbox_T> &bboxes);
     int retClassNum();
+    void setClassNum(int n);
 private:
     int num_class;
     network *net;

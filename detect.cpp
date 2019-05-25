@@ -40,7 +40,7 @@ YOLO_Detect::YOLO_Detect(std::string &cfg, std::string &weight)
 {
     net = load_network( (char*)cfg.c_str(), (char*)weight.c_str(), 0);
     layers = net->layers[net->n - 1];
-    num_class = layers.classes;
+    num_class = layers.classes; // if you use GPU, be careful num_class = 0.
     set_batch_network(net, 1);
     bboxes.resize(num_class);
 }
@@ -129,4 +129,9 @@ void YOLO_Detect::readLabeltxt(int cls, std::string &path, std::vector<bbox_T> &
 
 int YOLO_Detect::retClassNum(){
     return num_class;
+}
+
+void YOLO_Detect::setClassNum(int n){
+    num_class = n;
+    bboxes.resize(num_class);
 }

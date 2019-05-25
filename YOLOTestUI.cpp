@@ -72,6 +72,10 @@ void YOLOTestUI::onPushRunTest()
     predict.clear();
     g_truth.clear();
     num_class = yolo->retClassNum();
+    if(num_class == 0){
+        num_class = ui->spinClasses->value();
+        yolo->setClassNum(num_class);
+    }
     predict.resize(num_class);
     g_truth.resize(num_class);
     ui->plainDebugLog->appendPlainText("Forward... (please wait)");
