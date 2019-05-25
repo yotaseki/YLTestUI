@@ -188,10 +188,10 @@ YOLOTestUI::~YOLOTestUI()
 {
     delete ui;
     delete vis_ui;
-    delete[] scrollVisContent;
     delete[] vis_img;
     delete[] vis_fname;
     delete[] vis_vlay;
+    delete[] scrollVisContent;
 }
 
 bool YOLOTestUI::enableRun()
@@ -277,10 +277,6 @@ void YOLOTestUI::displayResultImageOnScrollVisResults(int page)
         for(int cls=0; cls<num_class; cls++){
             drawBbox(res, res, predict[cls][idx], g_truth[cls][idx], threshold, cls);
         }
-        if(res.empty()){
-            qDebug() << "Empty";
-            continue;
-        }
         QPixmap pMap = myq.MatBGR2pixmap(res);
         int w = images[idx].cols * 0.5;
         int h = images[idx].rows * 0.5;
@@ -288,8 +284,9 @@ void YOLOTestUI::displayResultImageOnScrollVisResults(int page)
         vis_img[i].setMinimumSize(QSize(w,h));
         vis_img[i].setMaximumSize(QSize(w,h));
         pMap = pMap.scaled(vis_img[i].size());
+        vis_img[i].clear();
         vis_img[i].setPixmap( pMap );
-        
+        vis_fname[i].clear();
         vis_fname[i].setText(qfi.baseName());
         vis_fname[i].setAlignment(Qt::AlignCenter);
         vis_fname[i].setMinimumSize(QSize(w,30));
