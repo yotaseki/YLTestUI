@@ -37,9 +37,11 @@ public:
     QFileInfoList scanFiles(QString targetpath ,QString filter);
     QFileInfoList scanDirs(QString targetpath ,QString filter);
     QPixmap MatBGR2pixmap(cv::Mat src);
+    QPixmap MatBGRA2pixmap(cv::Mat src);
     QDir makeDirectory(QString targetPath, QString dirname);
     QString filenameGen(QString objectname, int num, QString extension=".png");
     QColor retColor(int color);
+    cv::Scalar qcolor2scalar(QColor);
 private:
 };
 

@@ -52,8 +52,8 @@ YOLO_Detect::~YOLO_Detect()
 
 void YOLO_Detect::detect(cv::Mat &src)
 {
-    cv::Mat resized;
-    cv::resize(src,resized,cv::Size(net->w,net->h));
+    cv::Mat resized = src.clone();
+    cv::resize(resized,resized,cv::Size(net->w,net->h));
     IplImage ipl = resized;
     image im = ipl_to_image(&ipl);
     float *X = im.data;
@@ -77,6 +77,8 @@ void YOLO_Detect::detect(cv::Mat &src)
             bboxes[cls].push_back(b);
         }
     }
+    free_detections(dets, num_bbox);
+    free_image(im);
 }
 
 void YOLO_Detect::getPredict(int cls, float threshold, std::vector<bbox_T> &bbox_v)

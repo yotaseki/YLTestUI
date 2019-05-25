@@ -53,7 +53,7 @@ void YOLO_Test::run_test(vector<YOLO_Detect::bbox_T> &pr,vector<YOLO_Detect::bbo
         sum_iou = sum_iou + iou;
         test_count = test_count + 1;
         mIoU = sum_iou / test_count;
-        if(iou > 0.1){
+        if(iou > 0.5){
             TP++;
         }
         else{

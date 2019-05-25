@@ -32,6 +32,8 @@ private slots:
     void onComboIndexChanged();
     void stateChangedCheckOpenImage();
     bool enableRun();
+    void valueChangedVisPage(int);
+    void valueChangedVisThreshold(int);
 
 private:
     Ui::YOLOTestUI *ui;
@@ -39,7 +41,9 @@ private:
     QWidget vis_widget;
     MyQclass myq;
     int vis_num;
+    int num_class;
     QDir currentdir;
+    QWidget *scrollVisContent;
     QLabel *vis_img;
     QLabel *vis_fname;
     QVBoxLayout *vis_vlay;
@@ -50,7 +54,7 @@ private:
     std::vector<std::vector<std::vector<YOLO_Detect::bbox_T> > > predict;
     std::vector<std::vector<std::vector<YOLO_Detect::bbox_T> > > g_truth;
     void connectSignals();
-    void drawBbox(cv::Mat &img, cv::Mat &dst, std::vector<YOLO_Detect::bbox_T>  p_bbox, std::vector<YOLO_Detect::bbox_T>  t_bbox);
+    void drawBbox(cv::Mat &img, cv::Mat &dst, std::vector<YOLO_Detect::bbox_T>  p_bbox, std::vector<YOLO_Detect::bbox_T>  t_bbox, float threshold, int color_idx);
     void displayResultImageOnScrollVisResults(int page);
     void drawBbox(cv::Mat &src, cv::Mat &dst, YOLO_Detect::bbox_T &bbox);
 };

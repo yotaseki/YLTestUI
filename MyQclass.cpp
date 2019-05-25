@@ -70,8 +70,19 @@ QFileInfoList MyQclass::scanFiles(QString targetpath ,QString filter)
 
 QPixmap MyQclass::MatBGR2pixmap(cv::Mat src)
 {
-    cv::cvtColor(src, src,CV_BGR2BGRA);
-    QPixmap pixmap = QPixmap::fromImage(QImage(src.data, src.cols, src.rows, QImage::Format_ARGB32));
+    cv::cvtColor(src, src,CV_BGR2RGB);
+    QPixmap pixmap = QPixmap::fromImage(QImage((unsigned char *)src.data, src.cols, src.rows, QImage::Format_RGB888));
+    return pixmap;
+}
+
+QPixmap MyQclass::MatBGRA2pixmap(cv::Mat src)
+{
+    /*
+    cv::Mat abgr(src.size(), src.type());
+    int from_to[] = { 0,3, 1,1, 2,2, 3,0 };
+    cv::mixChannels(&src,1,&abgr,1,from_to,4);
+    */
+    QPixmap pixmap = QPixmap::fromImage(QImage((unsigned char *)src.data, src.cols, src.rows, QImage::Format_ARGB32));
     return pixmap;
 }
 
@@ -111,3 +122,10 @@ QColor MyQclass::retColor(int color)
     if(color==NAVY  )return QColor(   0,   0,0x80);
     else      return QColor(255/color,255/color,255/color);
 };
+
+cv::Scalar MyQclass::qcolor2scalar(QColor color)
+{
+    int r,g,b;
+    color.getRgb(&r, &g, &b);
+    return cv::Scalar(b,g,r);
+}
